@@ -64,7 +64,8 @@ export default function Inicio() {
           <Esqueleto filas={3} alto="h-32" />
         </div>
       ) : (
-        <div className="mt-6 grid items-start gap-4 md:grid-cols-5">
+        // grid-cols-1 = minmax(0, 1fr): sin esto, un título largo con "truncate" ensancha la columna en el celular.
+        <div className="mt-6 grid grid-cols-1 items-start gap-4 md:grid-cols-5">
           {/* Bloque principal: la próxima actividad con inscripciones abiertas. */}
           <section aria-labelledby="titulo-proxima" className={`${tarjeta} p-4 md:col-span-3 md:p-5`}>
             <h2 id="titulo-proxima" className="text-sm text-muted">Próxima actividad abierta</h2>

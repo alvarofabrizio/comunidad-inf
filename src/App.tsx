@@ -1,13 +1,19 @@
+import { lazy, Suspense } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { Esqueleto } from './components/Mensaje'
 import { OrgLayout } from './components/OrgLayout'
 import { RutaOrganizador } from './components/RutaOrganizador'
-import EditorActividad from './pages/org/EditorActividad'
-import EditorEncuesta from './pages/org/EditorEncuesta'
-import GestionActividad from './pages/org/GestionActividad'
-import Login from './pages/org/Login'
-import Panel from './pages/org/Panel'
 import { ProveedorSesion } from './hooks/useSesion'
+
+// El panel del organizador se descarga solo cuando alguien entra a /org:
+// los participantes en el celular no pagan esos kilobytes (red móvil).
+const EditorActividad = lazy(() => import('./pages/org/EditorActividad'))
+const EditorEncuesta = lazy(() => import('./pages/org/EditorEncuesta'))
+const EditorResumen = lazy(() => import('./pages/org/EditorResumen'))
+const GestionActividad = lazy(() => import('./pages/org/GestionActividad'))
+const Login = lazy(() => import('./pages/org/Login'))
+const Panel = lazy(() => import('./pages/org/Panel'))
 import Actividad from './pages/Actividad'
 import Bolsa from './pages/Bolsa'
 import Calendario from './pages/Calendario'
@@ -17,7 +23,6 @@ import Privacidad from './pages/Privacidad'
 import Ranking from './pages/Ranking'
 import Registro from './pages/Registro'
 import Resumenes from './pages/Resumenes'
-import EditorResumen from './pages/org/EditorResumen'
 
 function NoEncontrada() {
   return (
@@ -34,6 +39,7 @@ function NoEncontrada() {
 export default function App() {
   return (
     <ProveedorSesion>
+      <Suspense fallback={<div className="mx-auto max-w-5xl px-4 pt-6"><Esqueleto filas={3} /></div>}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Inicio />} />
@@ -62,6 +68,7 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
+      </Suspense>
     </ProveedorSesion>
   )
 }
