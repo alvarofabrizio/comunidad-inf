@@ -3,6 +3,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AsientosEquipo } from '../components/AsientosEquipo'
 import { BotonCompartir } from '../components/BotonCompartir'
+import { ClickSpark } from '../components/ClickSpark'
 import { boton, campo, tarjeta } from '../components/estilos'
 import { FilaEquipo } from '../components/FilaEquipo'
 import { ErrorCarga, Esqueleto, Mensaje } from '../components/Mensaje'
@@ -370,9 +371,11 @@ function PanelInscripcion({
     return (
       <div className="space-y-3">
         {avisos}
+        <ClickSpark className="w-full sm:w-auto">
         <button type="button" disabled={ocupado} className={`${boton.primario} w-full sm:w-auto`} onClick={() => hacer(() => inscribirse(actividad.id, 'individual'), 'Listo, quedaste inscrito.')}>
           {ocupado ? 'Inscribiendo…' : 'Inscribirme'}
         </button>
+        </ClickSpark>
       </div>
     )
   }
@@ -412,9 +415,11 @@ function PanelInscripcion({
               Te inscribes solo y quedas en la bolsa: los organizadores te asignan a un equipo, o tú eliges uno que esté
               buscando integrantes.
             </p>
-            <button type="button" disabled={ocupado} className={`${boton.primario} mt-4 w-full sm:w-auto`} onClick={() => hacer(() => inscribirse(actividad.id, 'bolsa'), 'Listo, estás en la bolsa de equipos.')}>
+            <ClickSpark className="mt-4 w-full sm:w-auto">
+            <button type="button" disabled={ocupado} className={`${boton.primario} w-full sm:w-auto`} onClick={() => hacer(() => inscribirse(actividad.id, 'bolsa'), 'Listo, estás en la bolsa de equipos.')}>
               {ocupado ? 'Inscribiendo…' : 'Inscribirme y buscar equipo'}
             </button>
+            </ClickSpark>
           </>
         )}
         {modo === 'crear' && (
@@ -436,9 +441,11 @@ function PanelInscripcion({
                 esté completo. No se pide ni se guarda el género de nadie.
               </Casilla>
             )}
+            <ClickSpark className="w-full sm:w-auto">
             <button type="submit" disabled={ocupado} className={`${boton.primario} w-full sm:w-auto`}>
               {ocupado ? 'Creando…' : 'Crear equipo'}
             </button>
+            </ClickSpark>
           </form>
         )}
         {modo === 'codigo' && (

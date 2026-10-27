@@ -1,29 +1,37 @@
 @import "tailwindcss";
 
 /*
-  Tokens de Comunidad INF (estilo "accent-ladder" de design-taste-frontend).
-  Regla del estilo: el frambuesa (accent) va solo en marcas pequeñas (botón
-  principal, barras de datos, navegación activa); sus tintes claros
-  (accent-soft, accent-track) hacen todo el trabajo de áreas.
-  Contrastes AA verificados: ink sobre ground 16:1, muted sobre ground 5.5:1,
-  accent sobre blanco 5.6:1, blanco sobre accent 5.6:1, accent-ink sobre accent-soft 10:1.
+  Tokens de Comunidad INF. Paleta verde tomada de la AAII (Asociación de Alumnos
+  de Ingeniería Informática): bosque oscuro, verde de marca, lima y crema.
+  Estilo "accent-ladder" (design-taste-frontend): el verde lleno va en marcas
+  pequeñas (botón principal, barras, navegación activa) y sus tintes claros
+  hacen el trabajo de áreas. El bosque se usa en la cabecera, la barra inferior
+  y la banda del inicio, con texto crema y detalles en lima.
+  Contrastes AA verificados: ink/ground 15.2, muted/ground 6.5, blanco/accent 5.4,
+  accent/ground 5.0, accent-ink/accent-soft 7.9, lima/bosque 8.1, crema/bosque 11.4.
+  Como el acento es verde, "positive" usa los mismos tonos (evita dos verdes distintos).
 */
 @theme {
-  --color-ground: #fbf7f8;
+  --color-ground: #f6f8ef;
   --color-surface: #ffffff;
-  --color-raised: #f3f4f6;
-  --color-border: #e5e7eb;
-  --color-rule: #f2f2f2;
-  --color-control: #d1d5db;
-  --color-ink: #111827;
-  --color-muted: #5f6672;
-  --color-accent: #b8336a;
-  --color-accent-hover: #9c2a59;
-  --color-accent-soft: #fdf2f7;
-  --color-accent-track: #f8dbe8;
-  --color-accent-ink: #6b1d3e;
-  --color-positive: #247b50;
-  --color-positive-bg: #dcfce7;
+  --color-raised: #eef2e6;
+  --color-border: #dde5d3;
+  --color-rule: #edf1e6;
+  --color-control: #c3cdb8;
+  --color-ink: #0f2418;
+  --color-muted: #4d5d52;
+  --color-accent: #1d7a3c;
+  --color-accent-hover: #166331;
+  --color-accent-soft: #e6f4d9;
+  --color-accent-track: #cfe8b6;
+  --color-accent-ink: #14532d;
+  --color-bosque: #0c3a20;
+  --color-bosque-2: #134d2b;
+  --color-lima: #a3e04b;
+  --color-crema: #f5f3dc;
+  --color-crema-tenue: #c9d8c4;
+  --color-positive: #1d7a3c;
+  --color-positive-bg: #e6f4d9;
   --color-positive-ink: #14532d;
   --color-negative: #c4242a;
   --color-negative-bg: #ffedea;
@@ -87,6 +95,26 @@
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* En las zonas bosque (cabecera, barra inferior, banda del inicio, pie) el foco
+   verde no se vería: se usa lima, que contrasta 8:1 con el bosque. */
+.zona-oscura :focus-visible {
+  outline-color: var(--color-lima);
+}
+.zona-oscura ::selection {
+  background: var(--color-lima);
+  color: var(--color-bosque);
+}
+
+/* Pingü saluda: el ala sube y baja dos veces y luego descansa. */
+@keyframes pingu-saludo {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  15%, 45% { transform: rotate(-16deg); }
+  30% { transform: rotate(8deg); }
+}
+.pingu-ala {
+  animation: pingu-saludo 2.4s ease-in-out 0.4s 2;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { boton, campo, tarjeta } from '../components/estilos'
+import { ClickSpark } from '../components/ClickSpark'
 import { Mensaje } from '../components/Mensaje'
 import { useSesion } from '../hooks/useSesion'
 import { eliminarMiPerfil, registrarParticipante } from '../lib/api'
@@ -204,9 +205,11 @@ export default function Registro() {
 
         {errorGeneral && <Mensaje tono="error">{errorGeneral}</Mensaje>}
 
-        <button type="submit" disabled={enviando} className={`${boton.primario} w-full`}>
-          {enviando ? 'Registrando…' : 'Registrarme'}
-        </button>
+        <ClickSpark className="w-full">
+          <button type="submit" disabled={enviando} className={`${boton.primario} w-full`}>
+            {enviando ? 'Registrando…' : 'Registrarme'}
+          </button>
+        </ClickSpark>
       </form>
     </section>
   )

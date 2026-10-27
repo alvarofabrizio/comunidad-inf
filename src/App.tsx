@@ -3,6 +3,7 @@ import { Link, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Esqueleto } from './components/Mensaje'
 import { OrgLayout } from './components/OrgLayout'
+import { Pinguino } from './components/Pinguino'
 import { RutaOrganizador } from './components/RutaOrganizador'
 import { ProveedorSesion } from './hooks/useSesion'
 
@@ -26,10 +27,12 @@ import Resumenes from './pages/Resumenes'
 
 function NoEncontrada() {
   return (
-    <section>
-      <h1 className="text-2xl font-bold">Página no encontrada</h1>
+    <section className="flex flex-col items-center py-8 text-center">
+      <Pinguino className="w-28" saludar={false} />
+      <h1 className="mt-4 text-2xl font-bold">Página no encontrada</h1>
       <p className="mt-2 text-[15px] text-muted">
-        Revisa el enlace o vuelve al <Link to="/" className="font-medium text-accent underline">inicio</Link>.
+        Pingü buscó por todo el pabellón y no la encontró. Revisa el enlace o vuelve al{' '}
+        <Link to="/" className="font-medium text-accent underline">inicio</Link>.
       </p>
     </section>
   )

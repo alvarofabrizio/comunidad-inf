@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { BarraResultado } from '../components/BarraResultado'
+import { ClickSpark } from '../components/ClickSpark'
 import { boton, tarjeta } from '../components/estilos'
 import { ErrorCarga, Esqueleto, Mensaje } from '../components/Mensaje'
 import { RequiereRegistro } from '../components/RequiereRegistro'
@@ -159,9 +160,11 @@ export default function Encuesta() {
             )
           })}
           {errorVoto && <Mensaje tono="error">{errorVoto}</Mensaje>}
-          <button type="submit" disabled={enviando} className={`${boton.primario} w-full sm:w-auto`}>
-            {enviando ? 'Enviando…' : `Enviar mi voto (${seleccion.size})`}
-          </button>
+          <ClickSpark className="w-full sm:w-auto">
+            <button type="submit" disabled={enviando} className={`${boton.primario} w-full sm:w-auto`}>
+              {enviando ? 'Enviando…' : `Enviar mi voto (${seleccion.size})`}
+            </button>
+          </ClickSpark>
         </form>
       ) : (
         errorVoto && <div className="mt-4"><Mensaje tono="error">{errorVoto}</Mensaje></div>

@@ -2,6 +2,9 @@ import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { boton, tarjeta } from '../components/estilos'
 import { ErrorCarga, Esqueleto } from '../components/Mensaje'
+import { DameroPixeles } from '../components/Marca'
+import { Pinguino } from '../components/Pinguino'
+import { PixelCard } from '../components/PixelCard'
 import { TarjetaActividad } from '../components/TarjetaActividad'
 import { useCarga } from '../hooks/useCarga'
 import { useSesion } from '../hooks/useSesion'
@@ -13,7 +16,7 @@ import {
   obtenerResultadosEncuesta,
   obtenerTemporadaActiva,
 } from '../lib/api'
-import { etiquetaTipo, fechaHora, plural } from '../lib/formato'
+import { etiquetaCategoria, etiquetaTipo, fechaHora, ordenCategorias, plural } from '../lib/formato'
 
 // Inicio: responde "¿qué puedo hacer ahora?": la próxima actividad abierta,
 // la encuesta vigente y cómo va el ranking.
@@ -27,7 +30,11 @@ export default function Inicio() {
       temporada ? obtenerRanking(temporada.id) : Promise.resolve([]),
     ])
     const resultados = encuesta ? await obtenerResultadosEncuesta(encuesta.id) : []
-    return { temporada, actividades, encuesta, ranking, votantes: resultados[0]?.total_votantes ?? 0 }
+    // La opción con más votos de cada categoría (si hay votos), para mostrar "va ganando".
+    const lideres = ordenCategorias
+      .map((c) => resultados.filter((r) => r.categoria === c && r.votos > 0).sort((a, b) => b.votos - a.votos)[0])
+      .filter((r): r is NonNullable<typeof r> => !!r)
+    return { temporada, actividades, encuesta, ranking, lideres, votantes: resultados[0]?.total_votantes ?? 0 }
   }, [])
 
   const ahora = Date.now()
@@ -38,22 +45,39 @@ export default function Inicio() {
 
   return (
     <div>
-      <h1 className="text-[28px] leading-tight font-bold tracking-[-0.02em] md:text-[32px]">
-        Comunidad INF
-      </h1>
-      <p className="mt-2 max-w-prose text-base text-muted">
-        Vota qué hacemos este ciclo, inscríbete aunque vengas solo y suma puntos por asistir.
-        {datos?.temporada ? ` ${datos.temporada.nombre}.` : ''}
-      </p>
-
-      {!perfil && (
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[8px] bg-accent-soft p-4">
-          <p className="text-[15px] text-accent-ink">Regístrate en un minuto, sin contraseña, para votar e inscribirte.</p>
-          <Link to="/registro" className={`${boton.primario} w-full sm:w-auto`}>
-            Registrarme
-          </Link>
+      {/* Banda de bienvenida en bosque, con el damero pixelado de la AAII y Pingü saludando. */}
+      <section
+        aria-labelledby="titulo-inicio"
+        className="zona-oscura relative -mx-4 -mt-6 overflow-hidden bg-bosque px-4 pt-7 md:mx-0 md:mt-0 md:rounded-[8px] md:px-8"
+      >
+        <DameroPixeles className="absolute top-0 right-0 w-16 -scale-x-100 opacity-40 md:w-20" />
+        <DameroPixeles className="absolute right-0 bottom-0 w-20 rotate-180 opacity-30 md:w-24" />
+        <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+          <div className="pb-7">
+            <h1 id="titulo-inicio" className="text-[26px] leading-[1.1] font-bold tracking-[-0.02em] text-crema md:text-[32px]">
+              Juega, vota y <span className="text-lima">súmate</span>
+            </h1>
+            <p className="mt-2 max-w-md text-base text-crema-tenue">
+              Las actividades de Ingeniería Informática PUCP: elige qué hacemos, inscríbete aunque vengas solo y suma
+              puntos por asistir.{datos?.temporada ? ` ${datos.temporada.nombre}.` : ''}
+            </p>
+            {perfil ? (
+              <p className="mt-4 text-[15px] font-medium text-crema">
+                Hola, <span className="text-lima">{perfil.alias}</span>. Revisa qué hay abierto.
+              </p>
+            ) : (
+              <Link
+                to="/registro"
+                className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-lima px-4 text-[15px] font-semibold text-bosque transition-transform hover:brightness-105 active:scale-[0.98]"
+              >
+                Únete en 1 minuto
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            )}
+          </div>
+          <Pinguino className="-mb-1 w-24 sm:w-32 md:w-36" />
         </div>
-      )}
+      </section>
 
       {error ? (
         <div className="mt-6">
@@ -67,7 +91,9 @@ export default function Inicio() {
         // grid-cols-1 = minmax(0, 1fr): sin esto, un título largo con "truncate" ensancha la columna en el celular.
         <div className="mt-6 grid grid-cols-1 items-start gap-4 md:grid-cols-5">
           {/* Bloque principal: la próxima actividad con inscripciones abiertas. */}
-          <section aria-labelledby="titulo-proxima" className={`${tarjeta} p-4 md:col-span-3 md:p-5`}>
+          {/* PixelCard (React Bits): al pasar el mouse o enfocar, se encienden píxeles verdes. */}
+          <PixelCard className={`${tarjeta} md:col-span-3 md:self-stretch`}>
+          <section aria-labelledby="titulo-proxima" className="p-4 md:p-5">
             <h2 id="titulo-proxima" className="text-sm text-muted">Próxima actividad abierta</h2>
             {destacada ? (
               <>
@@ -95,8 +121,10 @@ export default function Inicio() {
               <p className="mt-2 text-[15px] text-muted">No hay inscripciones abiertas por ahora.</p>
             )}
           </section>
+          </PixelCard>
 
-          <section aria-labelledby="titulo-encuesta-inicio" className={`${tarjeta} p-4 md:col-span-2 md:p-5`}>
+          {/* Misma altura que la tarjeta de al lado: la acción baja al pie (lo único que puede ir ahí). */}
+          <section aria-labelledby="titulo-encuesta-inicio" className={`${tarjeta} flex flex-col p-4 md:col-span-2 md:self-stretch md:p-5`}>
             <h2 id="titulo-encuesta-inicio" className="text-sm text-muted">Encuesta</h2>
             {datos?.encuesta ? (
               <>
@@ -105,6 +133,17 @@ export default function Inicio() {
                   {plural(datos.votantes, 'persona votó', 'personas votaron')}
                   {encuestaEstaAbierta(datos.encuesta) ? '' : ' · cerrada'}
                 </p>
+                {datos.lideres.length > 0 && (
+                  <dl className="mt-3 space-y-1 text-[15px]">
+                    {datos.lideres.map((r) => (
+                      <div key={r.categoria} className="flex justify-between gap-3">
+                        <dt className="text-muted">{etiquetaCategoria[r.categoria]}</dt>
+                        <dd className="truncate font-medium">{r.texto}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+                <div className="flex-1" />
                 <Link to="/encuesta" className={`${boton.secundario} mt-4 w-full`}>
                   {encuestaEstaAbierta(datos.encuesta) ? 'Votar y ver resultados' : 'Ver resultados'}
                 </Link>
