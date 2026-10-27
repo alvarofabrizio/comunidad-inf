@@ -156,8 +156,11 @@ export default function Actividad() {
               miEquipo={miEquipo}
               alCambiar={recargar}
             />
-          ) : (
+          ) : actividad.estado === 'abierta' ? (
             <RequiereRegistro accion="inscribirte" />
+          ) : (
+            // Sin inscripciones abiertas no tiene sentido invitar a registrarse para inscribirse.
+            <Mensaje tono="info">Las inscripciones no están abiertas ({etiquetaEstado[actividad.estado].toLowerCase()}).</Mensaje>
           )}
         </div>
       </section>
