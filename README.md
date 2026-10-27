@@ -111,7 +111,8 @@ docs/                  contexto, arquitectura, documento breve, declaración de 
 ## Documentos
 
 - [Documento breve del producto](docs/DOCUMENTO_BREVE_PRODUCTO.md)
-- [Borrador de la declaración de uso de IA](docs/DECLARACION_USO_IA_BORRADOR.md) y [registro de uso de IA](IA_LOG.md)
+- [Declaración de uso de IA (Word)](docs/Declaracion_Uso_IA.docx), su [borrador en Markdown](docs/DECLARACION_USO_IA_BORRADOR.md) y el [registro de uso de IA](IA_LOG.md)
+- [Documento breve en Word](docs/Documento_Breve_Producto.docx) y [guía interna del equipo](docs/Guia_Interna_Equipo.docx)
 - [Preguntas para la defensa](docs/PREGUNTAS_DEFENSA.md)
 
 ## Créditos
