@@ -1,1 +1,99 @@
 @import "tailwindcss";
+
+/*
+  Tokens de Comunidad INF (estilo "accent-ladder" de design-taste-frontend).
+  Regla del estilo: el frambuesa (accent) va solo en marcas pequeñas (botón
+  principal, barras de datos, navegación activa); sus tintes claros
+  (accent-soft, accent-track) hacen todo el trabajo de áreas.
+  Contrastes AA verificados: ink sobre ground 16:1, muted sobre ground 5.5:1,
+  accent sobre blanco 5.6:1, blanco sobre accent 5.6:1, accent-ink sobre accent-soft 10:1.
+*/
+@theme {
+  --color-ground: #fbf7f8;
+  --color-surface: #ffffff;
+  --color-raised: #f3f4f6;
+  --color-border: #e5e7eb;
+  --color-rule: #f2f2f2;
+  --color-control: #d1d5db;
+  --color-ink: #111827;
+  --color-muted: #5f6672;
+  --color-accent: #b8336a;
+  --color-accent-hover: #9c2a59;
+  --color-accent-soft: #fdf2f7;
+  --color-accent-track: #f8dbe8;
+  --color-accent-ink: #6b1d3e;
+  --color-positive: #247b50;
+  --color-positive-bg: #dcfce7;
+  --color-positive-ink: #14532d;
+  --color-negative: #c4242a;
+  --color-negative-bg: #ffedea;
+  --color-negative-ink: #831c1e;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-warning-ink: #92400e;
+
+  --font-sans: "DM Sans", Inter, system-ui, sans-serif;
+
+  --radius-card: 8px;
+  --radius-control: 6px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--color-control) var(--color-ground);
+  }
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-accent-track);
+    color: var(--color-accent-ink);
+  }
+  input,
+  select,
+  textarea {
+    caret-color: var(--color-accent);
+  }
+  /* Foco visible en todo lo interactivo (navegación con teclado). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  a {
+    text-underline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Espacio para la barra inferior del celular, respetando la zona segura del iPhone. */
+  .pb-nav {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

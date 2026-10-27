@@ -1,20 +1,43 @@
-import { Route, Routes } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
+import { Layout } from './components/Layout'
+import { ProveedorSesion } from './hooks/useSesion'
+import Actividad from './pages/Actividad'
+import Bolsa from './pages/Bolsa'
+import Calendario from './pages/Calendario'
+import Encuesta from './pages/Encuesta'
+import Inicio from './pages/Inicio'
+import Privacidad from './pages/Privacidad'
+import Ranking from './pages/Ranking'
+import Registro from './pages/Registro'
 
-// Esqueleto de rutas. Las páginas reales se construyen en la Fase 2 (públicas) y la Fase 3 (/org).
-function Pendiente({ nombre }: { nombre: string }) {
+function NoEncontrada() {
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="text-xl font-semibold">Comunidad INF</h1>
-      <p className="mt-2 text-sm">Vista "{nombre}" en construcción.</p>
-    </main>
+    <section>
+      <h1 className="text-2xl font-bold">Página no encontrada</h1>
+      <p className="mt-2 text-[15px] text-muted">
+        Revisa el enlace o vuelve al <Link to="/" className="font-medium text-accent underline">inicio</Link>.
+      </p>
+    </section>
   )
 }
 
+// Rutas públicas (Fase 2). Las rutas /org del organizador se agregan en la Fase 3.
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Pendiente nombre="Inicio" />} />
-      <Route path="*" element={<Pendiente nombre="No encontrada" />} />
-    </Routes>
+    <ProveedorSesion>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/calendario" element={<Calendario />} />
+          <Route path="/actividad/:id" element={<Actividad />} />
+          <Route path="/actividad/:id/bolsa" element={<Bolsa />} />
+          <Route path="/encuesta" element={<Encuesta />} />
+          <Route path="/ranking" element={<Ranking />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="*" element={<NoEncontrada />} />
+        </Route>
+      </Routes>
+    </ProveedorSesion>
   )
 }
