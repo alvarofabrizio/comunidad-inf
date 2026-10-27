@@ -46,7 +46,7 @@ export function traducirError(error: ErrorSupabase | AuthError): Error {
   // Violación de UNIQUE: los nombres de índice vienen de 0001_esquema.sql.
   if (codigo === '23505') {
     if (texto.includes('participantes_correo_unico')) {
-      return new Error('Este correo ya está registrado. Si ya te registraste, entra desde el mismo celular y navegador que usaste.')
+      return new Error('Ya existe una cuenta con este correo. Ingresa con tu contraseña.')
     }
     if (texto.includes('participantes_alias_unico')) return new Error('Ese alias ya está en uso. Elige otro.')
     if (texto.includes('participantes_pkey')) return new Error('Este dispositivo ya tiene un perfil registrado.')
@@ -59,10 +59,20 @@ export function traducirError(error: ErrorSupabase | AuthError): Error {
     return new Error('No tienes permiso para hacer esto.')
   }
   if (codigo === '23514') return new Error('Algún dato no tiene el formato esperado. Revisa el formulario.')
-  if (/anonymous sign-ins are disabled/i.test(texto)) {
-    return new Error('El registro sin contraseña está desactivado en el servidor. Avísale a un organizador.')
+  // Códigos de Supabase Auth (cuentas con correo y contraseña).
+  if (codigo === 'user_already_exists' || codigo === 'email_exists') {
+    return new Error('Ya existe una cuenta con este correo. Ingresa con tu contraseña.')
   }
-  if (/invalid login credentials/i.test(texto)) return new Error('Correo o contraseña incorrectos.')
+  if (codigo === 'weak_password') return new Error('La contraseña es muy débil: usa al menos 8 caracteres.')
+  if (codigo === 'same_password') return new Error('La nueva contraseña debe ser distinta de la anterior.')
+  if (codigo === 'email_address_invalid') return new Error('Ese correo no es válido. Usa un correo real, por ejemplo el de la PUCP.')
+  if (codigo === 'over_email_send_rate_limit' || codigo === 'over_request_rate_limit') {
+    return new Error('Se alcanzó el límite de intentos por ahora. Espera unos minutos e inténtalo otra vez.')
+  }
+  if (codigo === 'invalid_credentials' || /invalid login credentials/i.test(texto)) return new Error('Correo o contraseña incorrectos.')
+  if (/anonymous sign-ins are disabled/i.test(texto)) {
+    return new Error('El servidor no permite esta sesión. Avísale a un organizador.')
+  }
   if (/failed to fetch|network/i.test(texto)) return new Error('No hay conexión con el servidor. Revisa tu internet e inténtalo otra vez.')
   return new Error('Ocurrió un error inesperado. Inténtalo otra vez.')
 }
@@ -89,17 +99,48 @@ export function escucharSesion(callback: (sesion: Session | null) => void): () =
 }
 
 /**
- * Registro de participante: crea (si no existe) una sesión anónima en este
- * navegador y guarda el perfil ligado a ese auth.uid(). No hay contraseña.
+ * Tipo de cuenta de la sesión actual, para saber qué pedir en el registro:
+ *   'ninguna'  → no hay sesión: se crea una cuenta con correo y contraseña
+ *   'anonima'  → sesión antigua sin contraseña (registros de antes de las cuentas)
+ *   'cuenta'   → ya hay una cuenta con correo (por ejemplo, un organizador)
  */
-export async function registrarParticipante(datos: NuevoParticipante): Promise<Participante> {
+export function tipoDeCuenta(sesion: Session | null): 'ninguna' | 'anonima' | 'cuenta' {
+  if (!sesion) return 'ninguna'
+  return sesion.user.is_anonymous ? 'anonima' : 'cuenta'
+}
+
+/**
+ * Registro de participante con cuenta (correo y contraseña).
+ * El perfil se guarda con id = auth.uid() del usuario de Supabase, así que la
+ * misma cuenta funciona en cualquier celular o computadora: basta con ingresar.
+ *
+ *   - Sin sesión: se crea la cuenta (signUp). Con "Confirm email" apagado en
+ *     Supabase, la sesión queda abierta al instante, sin enviar correos.
+ *   - Sesión anónima antigua: se convierte en cuenta (updateUser con correo y
+ *     contraseña). Supabase conserva el mismo id, por eso no se pierde nada.
+ *   - Cuenta existente sin perfil (p. ej. un organizador que también quiere
+ *     participar): solo se crea el perfil, con el correo de esa cuenta.
+ */
+export async function registrarParticipante(datos: NuevoParticipante & { contrasena?: string }): Promise<Participante> {
   if (!datos.consentimiento) throw new Error('Debes aceptar el tratamiento de tus datos para registrarte.')
+  const correo = datos.correo.trim().toLowerCase()
 
   let sesion = await obtenerSesion()
-  if (!sesion) {
-    const { data, error } = await supabase.auth.signInAnonymously()
+  const tipo = tipoDeCuenta(sesion)
+  if (tipo !== 'cuenta' && (datos.contrasena ?? '').length < 8) {
+    throw new Error('La contraseña debe tener al menos 8 caracteres.')
+  }
+
+  if (tipo === 'ninguna') {
+    const { data, error } = await supabase.auth.signUp({ email: correo, password: datos.contrasena! })
     if (error) throw traducirError(error)
     sesion = data.session
+    // Si Supabase tuviera "Confirm email" activado, no habría sesión hasta confirmar.
+    if (!sesion) throw new Error('Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego ingresa.')
+  } else if (tipo === 'anonima') {
+    const { error } = await supabase.auth.updateUser({ email: correo, password: datos.contrasena! })
+    if (error) throw traducirError(error)
+    sesion = await obtenerSesion()
   }
   if (!sesion) throw new Error('No se pudo iniciar la sesión. Inténtalo otra vez.')
 
@@ -110,7 +151,8 @@ export async function registrarParticipante(datos: NuevoParticipante): Promise<P
         id: sesion.user.id,
         nombre: datos.nombre.trim(),
         alias: datos.alias.trim(),
-        correo: datos.correo.trim().toLowerCase(),
+        // Con una cuenta ya existente, el perfil usa el correo de esa cuenta.
+        correo: tipo === 'cuenta' && sesion.user.email ? sesion.user.email.toLowerCase() : correo,
         especialidad: datos.especialidad,
         codigo_pucp: datos.codigo_pucp?.trim() || null,
         consentimiento: true,
@@ -128,12 +170,61 @@ export async function obtenerMiPerfil(): Promise<Participante | null> {
   return resultado(await supabase.from('participantes').select('*').eq('id', sesion.user.id).maybeSingle())
 }
 
-/** Borra el perfil propio (derecho de supresión, Ley 29733) y cierra la sesión. */
+/**
+ * Borra los datos propios (derecho de supresión, Ley 29733) y cierra la sesión.
+ * Usa la función borrar_mi_cuenta (0004_cuentas.sql), que elimina el perfil
+ * (con sus votos e inscripciones) y también la cuenta de acceso. Si esa
+ * migración aún no se ejecutó, al menos borra el perfil.
+ */
 export async function eliminarMiPerfil(): Promise<void> {
   const sesion = await obtenerSesion()
   if (!sesion) return
-  resultado(await supabase.from('participantes').delete().eq('id', sesion.user.id))
+  const { error } = await supabase.rpc('borrar_mi_cuenta')
+  if (error) {
+    // PGRST202: la función no existe todavía en la base.
+    if (error.code !== 'PGRST202') throw traducirError(error)
+    resultado(await supabase.from('participantes').delete().eq('id', sesion.user.id))
+  }
   await supabase.auth.signOut()
+}
+
+/** Ingresar con correo y contraseña desde cualquier dispositivo. */
+export async function iniciarSesion(correo: string, contrasena: string): Promise<void> {
+  const { error } = await supabase.auth.signInWithPassword({ email: correo.trim().toLowerCase(), password: contrasena })
+  if (error) throw traducirError(error)
+}
+
+/**
+ * Para registros antiguos sin contraseña (sesión anónima): les pone correo y
+ * contraseña a su cuenta actual. El id no cambia, así que el perfil, los votos
+ * y las inscripciones siguen siendo suyos y ya puede ingresar desde otro lado.
+ */
+export async function protegerCuenta(correo: string, contrasena: string): Promise<void> {
+  if (contrasena.length < 8) throw new Error('La contraseña debe tener al menos 8 caracteres.')
+  const { error } = await supabase.auth.updateUser({ email: correo.trim().toLowerCase(), password: contrasena })
+  if (error) throw traducirError(error)
+}
+
+/** Envía un correo con un enlace para crear una contraseña nueva (pantalla /restablecer). */
+export async function enviarRecuperacion(correo: string): Promise<void> {
+  const { error } = await supabase.auth.resetPasswordForEmail(correo.trim().toLowerCase(), {
+    redirectTo: `${window.location.origin}/restablecer`,
+  })
+  if (error) throw traducirError(error)
+}
+
+export async function cambiarContrasena(nueva: string): Promise<void> {
+  if (nueva.length < 8) throw new Error('La contraseña debe tener al menos 8 caracteres.')
+  const { error } = await supabase.auth.updateUser({ password: nueva })
+  if (error) throw traducirError(error)
+}
+
+/** Avisa cuando el usuario llega desde el enlace de recuperación del correo. */
+export function escucharRecuperacion(callback: () => void): () => void {
+  const { data } = supabase.auth.onAuthStateChange((evento) => {
+    if (evento === 'PASSWORD_RECOVERY') callback()
+  })
+  return () => data.subscription.unsubscribe()
 }
 
 // ---------------------------------------------------------------------------
@@ -141,8 +232,10 @@ export async function eliminarMiPerfil(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 /**
- * Inicia sesión con correo y contraseña. OJO: reemplaza la sesión anónima que
- * hubiera en este navegador (por eso el organizador debe usar otro navegador).
+ * Inicia sesión como organizador con correo y contraseña. Reemplaza la sesión
+ * de participante que hubiera en este navegador; quien tenga cuenta puede volver
+ * a ingresar como participante después. Una misma cuenta puede ser organizadora
+ * y tener perfil de participante a la vez.
  */
 export async function iniciarSesionOrganizador(correo: string, contrasena: string): Promise<boolean> {
   const { error } = await supabase.auth.signInWithPassword({ email: correo.trim(), password: contrasena })

@@ -20,12 +20,14 @@ export function Marca({ className = 'size-8' }: { className?: string }) {
 }
 
 /** Logotipo completo: marca + "Comunidad INF". Pensado para fondos bosque. */
-export function Logotipo({ texto = 'Comunidad' }: { texto?: string }) {
+export function Logotipo({ texto = 'Comunidad', compacto = false }: { texto?: string; compacto?: boolean }) {
   return (
     <span className="flex items-center gap-2">
       <Marca />
-      <span className="text-[17px] font-bold tracking-[-0.01em] text-crema">
-        {texto} <span className="text-lima">INF</span>
+      <span className="text-[17px] font-bold tracking-[-0.01em] whitespace-nowrap text-crema">
+        {/* compacto: en celulares angostos solo se ve "INF" para que entren los botones de la cabecera */}
+        <span className={compacto ? 'max-[399px]:sr-only' : undefined}>{texto} </span>
+        <span className="text-lima">INF</span>
       </span>
     </span>
   )

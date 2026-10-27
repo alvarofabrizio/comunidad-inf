@@ -23,6 +23,7 @@ Los estudiantes de Ingeniería Informática participan poco en las actividades d
 - **Ranking de temporada:** se gana por asistir (5 puntos) más un bonus por puesto (10, 6 o 4). En equipos, cada integrante recibe los puntos de su equipo. Se muestra solo el alias.
 - **Calendario:** próximas y pasadas, filtro por tipo y botón **Compartir** por WhatsApp con un texto prearmado.
 - **Panel del organizador:** temporadas, actividades y encuestas; pasar personas de la bolsa a un equipo; asistencia; puestos; estados; exportar a CSV; resúmenes con foto.
+- **Cuentas:** registro con correo y contraseña e **Ingresar** desde cualquier dispositivo; recuperación de contraseña por correo.
 - **Privacidad:** consentimiento obligatorio, página de privacidad (Ley N.° 29733) y botón "Borrar mis datos".
 
 ## 4. Arquitectura
@@ -38,7 +39,7 @@ Los estudiantes de Ingeniería Informática participan poco en las actividades d
                 │ HTTPS (clave anónima pública)
  ┌──────────────▼──────────────┐
  │ Supabase                    │
- │  Auth: anónima / correo     │
+ │  Auth: correo y contraseña  │
  │  PostgreSQL + RLS           │  vistas sin correos · funciones que validan
  │  Storage: fotos de resumen  │  cupo, tamaño de equipo y voto único
  └─────────────────────────────┘
@@ -48,7 +49,7 @@ La seguridad no depende del navegador: aunque alguien modifique la app, la base 
 
 ## 5. Cómo probarlo
 
-1. Abre el enlace en el celular, regístrate (nombre, alias, correo y consentimiento) y vota en la encuesta.
+1. Abre el enlace en el celular, crea tu cuenta (nombre, alias, correo, contraseña y consentimiento) y vota en la encuesta.
 2. Inscríbete en **Torneo post-parciales** con **Busco equipo**.
 3. Desde otro dispositivo, el organizador entra a `/org`, te asigna a un equipo, marca la asistencia, registra los puestos y finaliza la actividad.
 4. Abre **Ranking**: aparece tu alias con los puntos correctos.
@@ -64,8 +65,8 @@ Usuario organizador de prueba: `[CORREO]` / `[CONTRASEÑA]` (se entrega en priva
 
 ## 7. Limitaciones
 
-- La sesión del participante vive en su navegador: si cambia de celular o borra los datos, pierde el acceso a su perfil, y su correo queda tomado hasta que un organizador lo elimine. Mejora futura: iniciar sesión con un enlace al correo.
-- El organizador y el participante no deben usar el mismo navegador.
+- Un navegador tiene una sesión a la vez: para pasar de organizador a participante hay que volver a ingresar.
+- Recuperar la contraseña usa el correo gratuito de Supabase, que envía pocos correos por hora.
 - No hay notificaciones, integración con Paideia ni inicio de sesión PUCP (fuera de alcance).
 - El plan gratuito de Supabase pausa el proyecto tras días sin uso, y limita los registros anónimos por IP.
 - Ideas pendientes: contador regresivo para cada actividad, "Agregar a mi calendario" (.ics), modo oscuro y una final de fin de ciclo con los mejores del ranking.

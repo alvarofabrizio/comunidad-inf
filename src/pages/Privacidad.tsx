@@ -7,7 +7,7 @@ const secciones: { titulo: string; contenido: ReactNode }[] = [
     titulo: 'Qué datos pedimos',
     contenido: (
       <ul className="list-disc space-y-1 pl-5">
-        <li>Nombre, alias público, correo y especialidad.</li>
+        <li>Nombre, alias público, correo y especialidad, y una contraseña para tu cuenta (Supabase la guarda cifrada; nadie del equipo puede verla).</li>
         <li>Código PUCP, solo si decides darlo.</li>
         <li>Tus votos, inscripciones, asistencia y resultados en las actividades.</li>
       </ul>
@@ -50,8 +50,8 @@ const secciones: { titulo: string; contenido: ReactNode }[] = [
         <Link to="/registro" className="font-medium text-accent underline underline-offset-2">
           tu perfil
         </Link>{' '}
-        puedes borrar tus datos en cualquier momento. Si ya no tienes acceso a este navegador, pídeselo a un organizador
-        de la AAII y lo eliminará. También puedes pedir acceso o corrección de tus datos.
+        puedes borrar tus datos en cualquier momento: se eliminan tu perfil, tus votos, tus inscripciones y tu cuenta. Si olvidaste tu contraseña, recupérala desde “Ingresar” o pídele a un organizador
+        de la AAII que elimine tus datos. También puedes pedir acceso o corrección de tus datos.
       </p>
     ),
   },

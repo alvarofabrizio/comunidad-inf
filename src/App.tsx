@@ -22,7 +22,9 @@ import Encuesta from './pages/Encuesta'
 import Inicio from './pages/Inicio'
 import Privacidad from './pages/Privacidad'
 import Ranking from './pages/Ranking'
+import Ingresar from './pages/Ingresar'
 import Registro from './pages/Registro'
+import Restablecer from './pages/Restablecer'
 import Resumenes from './pages/Resumenes'
 
 function NoEncontrada() {
@@ -52,6 +54,8 @@ export default function App() {
           <Route path="/encuesta" element={<Encuesta />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/registro" element={<Registro />} />
+          <Route path="/ingresar" element={<Ingresar />} />
+          <Route path="/restablecer" element={<Restablecer />} />
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="/resumenes" element={<Resumenes />} />
           <Route path="*" element={<NoEncontrada />} />

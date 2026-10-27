@@ -51,8 +51,9 @@ export default function Login() {
       {perfil && (
         <div className="mt-4">
           <Mensaje tono="info">
-            Este navegador está registrado como participante ({perfil.alias}). Si inicias sesión aquí, ese registro se
-            pierde en este navegador. Usa otro navegador o una ventana privada.
+            Este navegador tiene abierta la cuenta de participante {perfil.alias}. Si entras al panel con otra cuenta, se
+            cerrará; luego podrás volver a ingresar como participante con tu correo y contraseña. Si tu cuenta de
+            participante es la misma de organizador, entra con ella y tendrás ambas cosas.
           </Mensaje>
         </div>
       )}

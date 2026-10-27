@@ -27,7 +27,7 @@ export function Layout() {
       <header className="zona-oscura sticky top-0 z-20 bg-bosque">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-4 px-4">
           <Link to="/" aria-label="Comunidad INF, inicio" className="rounded-[6px]">
-            <Logotipo />
+            <Logotipo compacto={!perfil} />
           </Link>
           <nav aria-label="Principal" className="ml-2 hidden md:block">
             <ul className="flex gap-1">
@@ -59,13 +59,21 @@ export function Layout() {
                   <UserRound aria-hidden="true" className="size-4 text-lima" />
                   <span className="max-w-[9rem] truncate">{perfil.alias}</span>
                 </Link>
-              ) : pathname === '/registro' ? null : (
-                <Link
-                  to={`/registro?volver=${encodeURIComponent(pathname)}`}
-                  className="inline-flex min-h-10 items-center rounded-[6px] bg-lima px-3 text-[15px] font-semibold text-bosque transition-transform hover:brightness-105 active:scale-[0.98]"
-                >
-                  Registrarme
-                </Link>
+              ) : pathname === '/registro' || pathname === '/ingresar' ? null : (
+                <div className="flex items-center gap-1">
+                  <Link
+                    to={`/ingresar?volver=${encodeURIComponent(pathname)}`}
+                    className="inline-flex min-h-10 items-center rounded-[6px] px-2 text-[15px] font-medium text-crema hover:bg-bosque-2"
+                  >
+                    Ingresar
+                  </Link>
+                  <Link
+                    to={`/registro?volver=${encodeURIComponent(pathname)}`}
+                    className="inline-flex min-h-10 items-center rounded-[6px] bg-lima px-3 text-[15px] font-semibold whitespace-nowrap text-bosque transition-transform hover:brightness-105 active:scale-[0.98]"
+                  >
+                    Crear cuenta
+                  </Link>
+                </div>
               ))}
           </div>
         </div>

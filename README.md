@@ -12,17 +12,17 @@ Proyecto académico del curso **Ética y Responsabilidad Social Universitaria (P
 | Rol | Qué hace | Cuenta |
 |---|---|---|
 | Visitante | Ve el calendario, las actividades, la encuesta, el ranking y los resúmenes | No necesita |
-| Participante | Vota, se inscribe (individual, crea un equipo, se une con un código o entra a la bolsa) y suma puntos | Registro sin contraseña: nombre, alias, correo y consentimiento |
+| Participante | Vota, se inscribe (individual, crea un equipo, se une con un código o entra a la bolsa) y suma puntos | Cuenta con correo y contraseña: entra desde cualquier dispositivo con "Ingresar" |
 | Organizador | Crea temporadas, actividades y encuestas; arma equipos desde la bolsa; marca asistencia; registra puestos; publica resúmenes; exporta CSV | Correo y contraseña |
 
 ## Probarlo en 5 minutos (escenario de prueba)
 
-Usa **dos dispositivos**: un celular para el participante y otra computadora o una ventana privada para el organizador. Si se inicia sesión como organizador en el mismo navegador del participante, se pierde el registro del participante.
+Usa **dos dispositivos**: un celular para el participante y otra computadora o una ventana privada para el organizador. Un navegador tiene una sesión a la vez; si se cambia de cuenta, se vuelve a entrar con **Ingresar** (correo y contraseña).
 
 1. En el celular, abre https://comunidad-inf.vercel.app.
-2. Toca **Registrarme**, completa nombre, alias, correo y la casilla de consentimiento. Luego ve a **Encuesta** y vota (máximo 2 opciones por categoría).
+2. Toca **Crear cuenta**, completa nombre, alias, correo, contraseña y la casilla de consentimiento. Luego ve a **Encuesta** y vota (máximo 2 opciones por categoría).
 3. Entra a **Torneo post-parciales** → **Busco equipo** → **Inscribirme y buscar equipo**.
-4. En la otra computadora, el organizador entra a https://comunidad-inf.vercel.app/org, abre el torneo, ve a la persona en la **Bolsa** y la asigna a un equipo.
+4. En la otra computadora, el organizador entra por **Panel de organizadores** (pie de página) o https://comunidad-inf.vercel.app/org, abre el torneo, ve a la persona en la **Bolsa** y la asigna a un equipo.
 5. El organizador marca la asistencia del equipo, le pone un puesto (1.°, 2.° o 3.°) y cambia el estado a **Finalizada**.
 6. En el celular, abre **Ranking**: aparece el alias con sus puntos (5 por asistir + 10, 6 o 4 según el puesto).
 
@@ -38,7 +38,7 @@ Después de la demo, puedes devolver la actividad a "abierta" y borrar al partic
 Celular / navegador ──► React + Vite (SPA, desplegada en Vercel)
                               │  src/lib/api.ts (toda llamada a datos pasa por aquí)
                               ▼
-                        Supabase: Auth (anónima / correo) · PostgreSQL + RLS · Storage
+                        Supabase: Auth (correo y contraseña) · PostgreSQL + RLS · Storage
 ```
 
 - **Stack:** TypeScript, React 18, Vite, Tailwind CSS v4, React Router, supabase-js y Vitest.
@@ -75,15 +75,15 @@ Otros comandos:
 ## Configurar Supabase (una vez)
 
 1. Crea un proyecto gratuito en [supabase.com](https://supabase.com), región South America (São Paulo).
-2. **Authentication → Sign In / Providers:** activa **Allow anonymous sign-ins** y **Email**, y desactiva "Confirm email".
-3. **Authentication → Rate Limits:** sube el límite de anonymous sign-ins, porque en un laboratorio todos salen por la misma IP.
-4. **SQL Editor:** ejecuta en este orden [0001_esquema.sql](supabase/migrations/0001_esquema.sql), [0002_rls_y_funciones.sql](supabase/migrations/0002_rls_y_funciones.sql), [0003_storage.sql](supabase/migrations/0003_storage.sql) y [seed.sql](supabase/seed.sql). Los datos semilla son ficticios.
+2. **Authentication → Sign In / Providers:** activa **Email** y desactiva **Confirm email** (si no, cada registro envía un correo y el plan gratuito permite muy pocos por hora). Deja activado **Allow anonymous sign-ins**: lo usan los registros antiguos para convertirse en cuenta.
+3. **Authentication → Rate Limits:** sube los límites de registros e inicios de sesión, porque en un laboratorio todos salen por la misma IP.
+4. **SQL Editor:** ejecuta en este orden [0001_esquema.sql](supabase/migrations/0001_esquema.sql), [0002_rls_y_funciones.sql](supabase/migrations/0002_rls_y_funciones.sql), [0003_storage.sql](supabase/migrations/0003_storage.sql), [0004_cuentas.sql](supabase/migrations/0004_cuentas.sql) y [seed.sql](supabase/seed.sql). La 0004 solo agrega una función ("Borrar mis datos" también borra la cuenta) y no toca datos existentes. Los datos semilla son ficticios.
 5. **Authentication → Users → Add user** (con "Auto confirm"). Copia su UID y ejecuta:
    ```sql
    insert into organizadores (user_id, nombre) values ('UID-DEL-USUARIO', 'Organizador AAII');
    ```
 6. **Project Settings → API:** copia la Project URL y la clave anon/publishable a `.env.local` y a Vercel.
-7. **Authentication → URL Configuration:** Site URL = `https://comunidad-inf.vercel.app`.
+7. **Authentication → URL Configuration:** Site URL = `https://comunidad-inf.vercel.app`, y en **Redirect URLs** agrega `https://comunidad-inf.vercel.app/restablecer` y `http://localhost:5173/restablecer` (para "¿Olvidaste tu contraseña?"). El correo de recuperación usa el servicio gratuito de Supabase, que envía pocos correos por hora.
 
 ## Desplegar en Vercel
 

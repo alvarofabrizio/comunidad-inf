@@ -18,9 +18,9 @@ La seguridad por filas (RLS) de PostgreSQL: la tabla `participantes` solo deja l
 La validación no está en el navegador sino en funciones de la base (`votar`, `inscribirse`, `_agregar_a_equipo`). Esas funciones bloquean la fila de la actividad (`for update`) o usan un candado por persona, así que dos clics simultáneos no pueden saltarse la regla. Un segundo voto devuelve "Ya votaste en esta encuesta"; un equipo lleno devuelve "ya tiene 5 de 5 integrantes".
 **Respaldo:** funciones `votar`, `inscribirse` y `_agregar_a_equipo` en `0002_rls_y_funciones.sql`.
 
-### 5. ¿Por qué el registro no pide contraseña? ¿No es inseguro?
-Para bajar la barrera de entrada: el estudiante abre el enlace desde WhatsApp y se registra en un minuto. Supabase crea una **sesión anónima** ligada a su perfil, y la RLS exige `id = auth.uid()`, así que cada quien solo modifica lo suyo. La limitación es que el perfil vive en ese navegador. Los organizadores sí usan correo y contraseña.
-**Respaldo:** `registrarParticipante` en `src/lib/api.ts`, `src/pages/Registro.tsx`, política `participantes_propio_alta`.
+### 5. ¿Cómo funcionan las cuentas? ¿Puedo entrar desde otro celular?
+Sí. Cada participante crea una cuenta con correo y contraseña (Supabase Auth guarda la contraseña cifrada) y su perfil queda ligado al id de esa cuenta: `participantes.id = auth.uid()`. Con **Ingresar** entra desde cualquier dispositivo, y la RLS solo le deja modificar lo suyo. Al principio usábamos sesiones anónimas (el perfil vivía en un navegador); los registros antiguos se convierten en cuenta con "Protege tu cuenta" sin perder nada, porque Supabase conserva el mismo id. No hizo falta migrar datos.
+**Respaldo:** `registrarParticipante`, `iniciarSesion` y `protegerCuenta` en `src/lib/api.ts`; `src/pages/Registro.tsx`, `src/pages/Ingresar.tsx`; política `participantes_propio_alta`.
 
 ### 6. Si una actividad exige equipo mixto, ¿cómo lo controlan sin preguntar el género?
 No lo preguntamos ni lo guardamos: es un dato sensible y no es necesario. El capitán marca una casilla declarando que su equipo cumple la regla, y el organizador la ve en el panel. Es una decisión ética consciente: preferimos confiar en una declaración antes que crear una base de datos de género.
@@ -39,7 +39,7 @@ Con localStorage cada celular tendría sus propios datos: el organizador no ver�
 **Respaldo:** `docs/03_ARQUITECTURA.md` (alternativas descartadas), `src/lib/supabase.ts`, `vercel.json`.
 
 ### 10. ¿Qué limitaciones tiene y qué harían después?
-El perfil vive en un solo navegador (mejora: iniciar sesión con un enlace al correo); no hay notificaciones ni integración con Paideia; el plan gratuito pausa el proyecto y limita los registros por IP. Después agregaríamos un contador regresivo por actividad, "Agregar a mi calendario", modo oscuro y la final de fin de ciclo con los mejores del ranking. También haríamos una encuesta real para medir la participación antes y después.
+Un navegador tiene una sesión a la vez y la recuperación de contraseña depende del correo gratuito de Supabase (pocos envíos por hora); no hay notificaciones ni integración con Paideia; el plan gratuito pausa el proyecto y limita los registros por IP. Después agregaríamos un contador regresivo por actividad, "Agregar a mi calendario", modo oscuro y la final de fin de ciclo con los mejores del ranking. También haríamos una encuesta real para medir la participación antes y después.
 **Respaldo:** sección 7 de `docs/DOCUMENTO_BREVE_PRODUCTO.md`.
 
 ---
