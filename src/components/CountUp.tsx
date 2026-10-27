@@ -26,8 +26,17 @@ export function CountUp({ to, from = 0, duration = 0.9, className }: Props) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     let cuadro = 0
     let inicio: number | null = null
+    let anterior = 0
     const paso = (ahora: number) => {
+      // Si el navegador dibuja muy pocos cuadros (pestaña en segundo plano, ahorro de
+      // energía), la animación se cancela y se muestra el valor final: un ranking
+      // nunca debe quedarse mostrando un número a medias.
+      if (inicio !== null && ahora - anterior > 100) {
+        setValor(to)
+        return
+      }
       inicio ??= ahora
+      anterior = ahora
       const t = Math.min(1, (ahora - inicio) / (duration * 1000))
       setValor(Math.round(from + (to - from) * facilidad(t)))
       if (t < 1) cuadro = requestAnimationFrame(paso)
