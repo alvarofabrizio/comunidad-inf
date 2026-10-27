@@ -1,5 +1,6 @@
 import { Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Pinguino } from '../components/Pinguino'
 import { tarjeta } from '../components/estilos'
 import { ErrorCarga, Esqueleto } from '../components/Mensaje'
 import { useCarga } from '../hooks/useCarga'
@@ -50,9 +51,12 @@ export default function Resumenes() {
             ))}
           </ul>
         ) : (
-          <p className="rounded-[8px] border border-dashed border-control px-4 py-3 text-[15px] text-muted">
-            Todavía no hay resúmenes publicados.
-          </p>
+          <div className="flex items-center gap-4 rounded-[8px] border border-dashed border-control px-4 py-4">
+            <Pinguino className="w-16 flex-none" variante="cuaderno" />
+            <p className="text-[15px] text-muted">
+              Todavía no hay resúmenes publicados. Pingüi los anotará en su cuaderno cuando termine la próxima actividad.
+            </p>
+          </div>
         )}
       </div>
     </section>

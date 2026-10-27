@@ -107,7 +107,7 @@
   color: var(--color-bosque);
 }
 
-/* Pingü saluda: el ala sube y baja dos veces y luego descansa. */
+/* Pingüi saluda: el ala sube y baja dos veces y luego descansa. */
 @keyframes pingu-saludo {
   0%, 60%, 100% { transform: rotate(0deg); }
   15%, 45% { transform: rotate(-16deg); }

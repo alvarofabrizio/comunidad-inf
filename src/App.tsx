@@ -28,10 +28,10 @@ import Resumenes from './pages/Resumenes'
 function NoEncontrada() {
   return (
     <section className="flex flex-col items-center py-8 text-center">
-      <Pinguino className="w-28" saludar={false} />
+      <Pinguino className="w-32" variante="cuaderno" />
       <h1 className="mt-4 text-2xl font-bold">Página no encontrada</h1>
       <p className="mt-2 text-[15px] text-muted">
-        Pingü buscó por todo el pabellón y no la encontró. Revisa el enlace o vuelve al{' '}
+        Pingüi revisó todo su cuaderno y no la encontró. Revisa el enlace o vuelve al{' '}
         <Link to="/" className="font-medium text-accent underline">inicio</Link>.
       </p>
     </section>

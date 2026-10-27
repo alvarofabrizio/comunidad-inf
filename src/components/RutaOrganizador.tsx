@@ -44,7 +44,7 @@ export function RutaOrganizador() {
         <h1 className="text-2xl font-bold">Acceso solo para organizadores</h1>
         <p className="mt-2 text-[15px] text-muted">
           Tu cuenta ({sesion.user.email}) no está registrada como organizadora. Si deberías tener acceso, pídele a la
-          AATI que agregue tu usuario a la tabla de organizadores.
+          AAII que agregue tu usuario a la tabla de organizadores.
         </p>
         <button type="button" onClick={() => void cerrarSesion()} className={`${boton.secundario} mt-4`}>
           Cerrar sesión

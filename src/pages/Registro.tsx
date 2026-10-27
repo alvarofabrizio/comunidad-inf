@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { boton, campo, tarjeta } from '../components/estilos'
 import { ClickSpark } from '../components/ClickSpark'
 import { Mensaje } from '../components/Mensaje'
+import { Pinguino } from '../components/Pinguino'
 import { useSesion } from '../hooks/useSesion'
 import { eliminarMiPerfil, registrarParticipante } from '../lib/api'
 
@@ -132,13 +133,18 @@ export default function Registro() {
 
   return (
     <section aria-labelledby="titulo-registro">
-      <h1 id="titulo-registro" className="text-2xl font-bold tracking-[-0.02em] md:text-[32px]">
-        Regístrate para participar
-      </h1>
-      <p className="mt-2 max-w-prose text-[15px] text-muted">
-        Sin contraseña: tu registro queda guardado en este celular y navegador. Con él puedes votar, inscribirte y
-        sumar puntos.
-      </p>
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <h1 id="titulo-registro" className="text-2xl font-bold tracking-[-0.02em] md:text-[32px]">
+            Regístrate para participar
+          </h1>
+          <p className="mt-2 max-w-prose text-[15px] text-muted">
+            Sin contraseña: tu registro queda guardado en este celular y navegador. Con él puedes votar, inscribirte y
+            sumar puntos.
+          </p>
+        </div>
+        <Pinguino className="w-20 flex-none md:w-24" variante="cuaderno" />
+      </div>
 
       <form onSubmit={enviar} noValidate className={`${tarjeta} mt-6 space-y-5 p-4 md:p-6`}>
         <div>

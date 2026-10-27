@@ -37,7 +37,7 @@ const secciones: { titulo: string; contenido: ReactNode }[] = [
     contenido: (
       <ul className="list-disc space-y-1 pl-5">
         <li>Cualquier persona con el enlace ve solo tu alias (en el ranking, la bolsa y los equipos).</li>
-        <li>Tu nombre, correo y código PUCP solo los ven los organizadores (miembros de la AATI o delegados).</li>
+        <li>Tu nombre, correo y código PUCP solo los ven los organizadores (miembros de la AAII o delegados).</li>
         <li>Tú ves tu propio perfil desde este navegador.</li>
       </ul>
     ),
@@ -51,7 +51,7 @@ const secciones: { titulo: string; contenido: ReactNode }[] = [
           tu perfil
         </Link>{' '}
         puedes borrar tus datos en cualquier momento. Si ya no tienes acceso a este navegador, pídeselo a un organizador
-        de la AATI y lo eliminará. También puedes pedir acceso o corrección de tus datos.
+        de la AAII y lo eliminará. También puedes pedir acceso o corrección de tus datos.
       </p>
     ),
   },

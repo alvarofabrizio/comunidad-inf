@@ -7,7 +7,7 @@
 web (mobile-first; se abre desde un enlace en el celular)
 
 ## Users
-Estudiantes de Ingeniería Informática de la PUCP que reciben el enlace por WhatsApp y lo abren desde el celular, muchas veces sin grupo armado y sin conocer a otros compañeros. Organizadores: pocos miembros de la AATI o delegados, con poco tiempo y presupuesto, que gestionan todo desde el mismo sitio.
+Estudiantes de Ingeniería Informática de la PUCP que reciben el enlace por WhatsApp y lo abren desde el celular, muchas veces sin grupo armado y sin conocer a otros compañeros. Organizadores: pocos miembros de la AAII o delegados, con poco tiempo y presupuesto, que gestionan todo desde el mismo sitio.
 
 ## Product Purpose
 Integrar a la especialidad: saber qué quiere la mayoría (encuesta), facilitar que cualquiera se sume aunque llegue solo (inscripción individual y bolsa de equipos) y dar continuidad con una temporada y un ranking. Éxito: que alguien ajeno al grupo se registre, vote, se inscriba y vea sus puntos sin ayuda.

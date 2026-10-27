@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { boton, campo, tarjeta } from '../../components/estilos'
 import { Mensaje } from '../../components/Mensaje'
+import { Pinguino } from '../../components/Pinguino'
 import { useSesion } from '../../hooks/useSesion'
 import { cerrarSesion, iniciarSesionOrganizador } from '../../lib/api'
 
@@ -41,10 +42,11 @@ export default function Login() {
 
   return (
     <section aria-labelledby="titulo-login" className="mx-auto max-w-md">
+      <Pinguino className="mx-auto mb-2 w-24" variante="cuaderno" />
       <h1 id="titulo-login" className="text-2xl font-bold tracking-[-0.02em]">
         Panel del organizador
       </h1>
-      <p className="mt-2 text-[15px] text-muted">Acceso solo para organizadores de la AATI y delegados.</p>
+      <p className="mt-2 text-[15px] text-muted">Acceso solo para organizadores de la AAII y delegados.</p>
 
       {perfil && (
         <div className="mt-4">

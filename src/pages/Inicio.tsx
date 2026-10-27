@@ -45,7 +45,7 @@ export default function Inicio() {
 
   return (
     <div>
-      {/* Banda de bienvenida en bosque, con el damero pixelado de la AAII y Pingü saludando. */}
+      {/* Banda de bienvenida en bosque, con el damero pixelado de la AAII y Pingüi saludando. */}
       <section
         aria-labelledby="titulo-inicio"
         className="zona-oscura relative -mx-4 -mt-6 overflow-hidden bg-bosque px-4 pt-7 md:mx-0 md:mt-0 md:rounded-[8px] md:px-8"
