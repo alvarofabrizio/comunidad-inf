@@ -102,6 +102,7 @@ export default function GestionActividad() {
           className="min-h-10 rounded-[6px] border border-control bg-surface px-2 text-[15px] text-ink"
           value={actual?.posicion ?? ''}
           disabled={ocupado}
+          aria-label={`Puesto de ${etiqueta}`}
           onChange={(e) => {
             const valor = e.target.value
             if (!valor && actual) void hacer(() => eliminarResultado(actual.id), `Se quitó la posición de ${etiqueta}.`)
@@ -127,6 +128,7 @@ export default function GestionActividad() {
             disabled={ocupado}
             onChange={(e) => void hacer(() => marcarAsistencia(ins.id, e.target.checked), `${ins.participante.alias}: ${e.target.checked ? 'asistió' : 'sin asistencia'}.`)}
             className="size-5 flex-none accent-[var(--color-accent)]"
+            aria-label={`Asistió: ${ins.participante.alias}`}
           />
           <span className="min-w-0">
             <span className="block truncate text-[15px] font-medium">{ins.participante.alias}</span>
