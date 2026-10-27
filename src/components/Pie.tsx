@@ -24,6 +24,11 @@ export function Pie() {
           <Link to="/privacidad" className="font-medium text-lima underline underline-offset-2">
             Privacidad y datos personales
           </Link>
+          {' · '}
+          {/* Acceso discreto al panel: solo entran cuentas registradas en la tabla organizadores. */}
+          <Link to="/org" className="font-medium text-lima underline underline-offset-2">
+            Panel de organizadores
+          </Link>
         </p>
       </div>
     </footer>
