@@ -2,6 +2,7 @@ import { CalendarDays, Copy, MapPin, Monitor, Users } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AsientosEquipo } from '../components/AsientosEquipo'
+import { BotonCompartir } from '../components/BotonCompartir'
 import { boton, campo, tarjeta } from '../components/estilos'
 import { FilaEquipo } from '../components/FilaEquipo'
 import { ErrorCarga, Esqueleto, Mensaje } from '../components/Mensaje'
@@ -17,6 +18,7 @@ import {
   obtenerActividad,
   obtenerMiEquipo,
   obtenerMiInscripcion,
+  obtenerResumen,
   unirseAEquipoAbierto,
   unirseConCodigo,
 } from '../lib/api'
@@ -29,14 +31,15 @@ export default function Actividad() {
   const { id = '' } = useParams()
   const { perfil } = useSesion()
   const { datos, error, cargando, recargar } = useCarga(async () => {
-    const [actividad, equipos, inscritos, miInscripcion, miEquipo] = await Promise.all([
+    const [actividad, equipos, inscritos, miInscripcion, miEquipo, resumen] = await Promise.all([
       obtenerActividad(id),
       listarEquipos(id),
       listarInscritosPublicos(id),
       perfil ? obtenerMiInscripcion(id) : Promise.resolve(null),
       perfil ? obtenerMiEquipo(id) : Promise.resolve(null),
+      obtenerResumen(id),
     ])
-    return { actividad, equipos, inscritos, miInscripcion, miEquipo }
+    return { actividad, equipos, inscritos, miInscripcion, miEquipo, resumen }
   }, [id, perfil?.id])
 
   if (cargando && !datos) return <Esqueleto filas={3} alto="h-28" />
@@ -52,7 +55,7 @@ export default function Actividad() {
     )
   }
 
-  const { actividad, equipos, inscritos, miInscripcion, miEquipo } = datos
+  const { actividad, equipos, inscritos, miInscripcion, miEquipo, resumen } = datos
   const porEquipos = actividad.tamano_equipo > 1
   const ocupacion = Math.min(1, actividad.inscritos / actividad.cupo)
 
@@ -72,9 +75,12 @@ export default function Actividad() {
             {etiquetaEstado[actividad.estado]}
           </span>
         </div>
-        <h1 id="titulo-actividad" className="mt-3 text-2xl font-bold tracking-[-0.02em] md:text-[32px]">
-          {actividad.titulo}
-        </h1>
+        <div className="mt-3 flex items-start justify-between gap-3">
+          <h1 id="titulo-actividad" className="text-2xl font-bold tracking-[-0.02em] md:text-[32px]">
+            {actividad.titulo}
+          </h1>
+          {actividad.estado !== 'finalizada' && <BotonCompartir actividad={actividad} compacto />}
+        </div>
         <ul className="mt-3 space-y-1.5 text-[15px] text-ink">
           <li className="flex items-center gap-2">
             <CalendarDays aria-hidden="true" className="size-4 flex-none text-muted" />
@@ -122,6 +128,19 @@ export default function Actividad() {
       </header>
 
       {actividad.descripcion && <p className="mt-6 max-w-prose text-base leading-relaxed">{actividad.descripcion}</p>}
+
+      {resumen && (
+        <section aria-labelledby="titulo-resumen" className={`${tarjeta} mt-6 overflow-hidden`}>
+          {resumen.imagen_url && resumen.imagen_autorizada && (
+            <img src={resumen.imagen_url} alt={`Foto de ${actividad.titulo}`} loading="lazy" className="aspect-[16/9] w-full object-cover" />
+          )}
+          <div className="p-4">
+            <h2 id="titulo-resumen" className="text-lg font-semibold">Cómo nos fue</h2>
+            <p className="mt-1 text-base leading-relaxed">{resumen.texto}</p>
+            {resumen.ganadores && <p className="mt-2 text-[15px] font-medium text-accent-ink">Ganadores: {resumen.ganadores}</p>}
+          </div>
+        </section>
+      )}
 
       <section aria-labelledby="titulo-inscripcion" className="mt-8">
         <h2 id="titulo-inscripcion" className="text-lg font-semibold">

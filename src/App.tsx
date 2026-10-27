@@ -16,6 +16,8 @@ import Inicio from './pages/Inicio'
 import Privacidad from './pages/Privacidad'
 import Ranking from './pages/Ranking'
 import Registro from './pages/Registro'
+import Resumenes from './pages/Resumenes'
+import EditorResumen from './pages/org/EditorResumen'
 
 function NoEncontrada() {
   return (
@@ -42,6 +44,7 @@ export default function App() {
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/resumenes" element={<Resumenes />} />
           <Route path="*" element={<NoEncontrada />} />
         </Route>
 
@@ -53,6 +56,7 @@ export default function App() {
             <Route path="actividad/nueva" element={<EditorActividad />} />
             <Route path="actividad/:id" element={<GestionActividad />} />
             <Route path="actividad/:id/editar" element={<EditorActividad />} />
+            <Route path="actividad/:id/resumen" element={<EditorResumen />} />
             <Route path="encuesta/nueva" element={<EditorEncuesta />} />
             <Route path="encuesta/:id" element={<EditorEncuesta />} />
           </Route>

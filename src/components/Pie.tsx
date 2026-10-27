@@ -11,6 +11,9 @@ export function Pie() {
         <p className="mt-1">Hecho por {INTEGRANTES.join(', ')}.</p>
         <p className="mt-1">
           Uso académico y comunitario, no comercial.{' '}
+          <Link to="/resumenes" className="font-medium text-accent underline underline-offset-2">
+            Resúmenes
+          </Link>{' · '}
           <Link to="/privacidad" className="font-medium text-accent underline underline-offset-2">
             Privacidad y datos personales
           </Link>
