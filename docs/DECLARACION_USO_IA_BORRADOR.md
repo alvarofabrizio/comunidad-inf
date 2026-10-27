@@ -1,52 +1,54 @@
-# Declaración de uso de inteligencia artificial (borrador)
+# Declaración de uso de inteligencia artificial
 
 **Producto:** Comunidad INF, https://comunidad-inf.vercel.app
-**Curso:** Ética y Responsabilidad Social Universitaria, PUCP 2026-2
-**Equipo:** Carlos Monge, Alvaro Ferro, Mayerli López, Sebastián O'Brien y Bianca Pulido
-**Fuente:** este borrador se armó a partir de [IA_LOG.md](../IA_LOG.md), el registro que se llenó durante el desarrollo.
+**Curso:** Ética y Responsabilidad Social Universitaria, PUCP 2026-2 · Horario 0882
+**Equipo:** Mayerli Lopez, Alvaro Ferro, Bianca Pulido, Carlos Monge y Sebastián O'Brien
 
-> Este documento es un borrador. Las partes marcadas **[COMPLETAR POR EL EQUIPO]** solo las puede llenar el equipo: describen revisiones y decisiones humanas que la IA no puede afirmar. No se debe entregar con esas marcas.
+> Versión en Markdown de [Declaracion_Uso_IA.docx](Declaracion_Uso_IA.docx), que es la que se entrega. El detalle paso a paso está en [IA_LOG.md](../IA_LOG.md).
 
 ## 1. Herramientas usadas
 
-| Herramienta | Para qué |
+| Herramienta | Para qué se usó |
 |---|---|
-| **Claude Code** (modelo Claude Opus 5.5, app de escritorio de Claude) | Planificar, escribir el código (frontend, SQL, pruebas, scripts), probar en el navegador integrado, redactar la documentación |
-| Skills de diseño dentro de Claude Code: *ui-ux-pro-max*, *design-taste-frontend*, *impeccable* | Sistema de diseño, accesibilidad (contraste AA), revisión visual automatizada y piso de calidad de la interfaz |
-| [React Bits](https://reactbits.dev) (biblioteca de componentes, como referencia) | Inspiración para CountUp, ClickSpark y PixelCard, reescritos sin dependencias |
-| [COMPLETAR POR EL EQUIPO: otras herramientas de IA usadas fuera de Claude Code, por ejemplo para el informe de exploración, el afiche o el video, o "ninguna"] | |
+| Claude Code (modelo Claude Opus 5.5, app de escritorio de Claude) | Planificar, escribir el código (frontend, SQL, pruebas, scripts), probar en el navegador integrado y redactar la documentación |
+| Skills de diseño de Claude Code: ui-ux-pro-max, design-taste-frontend, impeccable | Sistema de diseño, accesibilidad (contraste AA), revisión visual automatizada y piso de calidad de la interfaz |
+| React Bits (reactbits.dev), como referencia | Inspiración para CountUp, ClickSpark y PixelCard, reescritos sin dependencias |
+| ChatGPT / Claude Web | Apoyo en la estructuración de la investigación cualitativa inicial para el Informe de Exploración del Problema y síntesis de entrevistas a estudiantes |
+| Herramientas de diseño gráfico (Canva / Figma) | Adaptación de la paleta institucional de la AAII, diseño de la mascota "Pingüi" y elaboración del afiche promocional |
 
-## 2. Para qué se usó en cada fase
+## 2. Cómo apoyó la IA
 
-| Fase | Qué hizo la IA | Qué hizo el equipo (registrado) |
+- **Planificación:** leyó la especificación, propuso un plan por fases y señaló las ambigüedades con una opción simple para cada una.
+- **Base de datos y seguridad:** esquema en PostgreSQL (Supabase), seguridad por filas, funciones que validan cupo, tamaño de equipo y voto único, y datos de prueba ficticios.
+- **Interfaz:** pantallas públicas y panel del organizador, accesibles y pensadas para celular.
+- **Identidad visual:** paleta verde de la AAII, logo y la mascota Pingüi dibujada en código a partir de la referencia del equipo.
+- **Pruebas y verificación:** pruebas automáticas de la regla de puntos, recorrido del escenario de prueba e intentos de ataque bloqueados por la base.
+- **Despliegue:** configuración para Vercel y diagnóstico de errores del despliegue.
+- **Documentación:** borradores del README, el documento breve, la guía interna, las preguntas de defensa y esta declaración.
+
+## 3. Prompts usados (parafraseados)
+
+| N.° | Etapa | Lo que se le pidió |
 |---|---|---|
-| 0. Plan | Leyó la especificación, propuso el plan por fases, listó 19 ambigüedades con la opción más simple y los pasos de Supabase | Escribió la especificación (`CLAUDE.md`, `docs/01-03`, `PROMPTS_CLAUDE_CODE.md`) y aprobó el plan |
-| 1. Base de datos | Generó el proyecto, el esquema SQL, la seguridad por filas, las funciones con reglas (cupo, equipos, voto único), los datos semilla ficticios, la capa de datos y las pruebas de la regla de puntos; validó el SQL en un PostgreSQL local | Creó el proyecto de Supabase, entregó la URL y la clave pública, y ejecutó las migraciones |
-| 2. Vistas públicas | Generó el registro sin contraseña, la privacidad, la encuesta, la actividad con sus 3 modos de inscripción, la bolsa y el ranking; aplicó las skills de diseño | Confirmó el contexto de producto (`PRODUCT.md`) y activó el registro anónimo en Supabase |
-| 3. Panel del organizador | Generó el login, la protección de `/org`, los CRUD, la gestión de la actividad, el CSV y el script de seguridad (14 ataques bloqueados) | Creó el usuario organizador e inició sesión para las pruebas |
-| 4. Ranking, calendario y resúmenes | Comparó el ranking SQL con `puntos.ts` (coinciden), hizo el calendario con Compartir por WhatsApp, los resúmenes con foto y autorización obligatoria, y el pie | Ejecutó `0003_storage.sql` |
-| Prueba del escenario | Recorrió los 6 pasos con datos reales, corrigió 2 detalles y limpió los datos de prueba | Autorizó usar su sesión de organizador y pidió la limpieza |
-| 5. Verificación y despliegue | Amplió la prueba de seguridad (26 ataques bloqueados), revisó 23 vistas a 375 px, corrigió un desborde en el inicio, creó `vercel.json` y diagnosticó la página en blanco por variables mal nombradas | Creó el repositorio en GitHub, desplegó en Vercel y corrigió las variables de entorno |
-| Identidad visual | Rediseñó la paleta en verde, creó el logo, dibujó a Pingüi en dos variantes e integró los componentes inspirados en React Bits | Entregó el afiche y el logo de la AAII como referencia de color, el diseño de Pingüi y los nombres del equipo |
-| 6. Documentación | Redactó el README, el documento breve, este borrador y las preguntas de defensa, usando también la propuesta de Sebastián | [COMPLETAR POR EL EQUIPO] |
-
-## 3. Qué revisó, cambió o decidió el equipo
-
-Esta sección es obligatoria y solo la puede escribir el equipo. Sugerencias de qué registrar con honestidad:
-
-- **Revisión del código:** qué archivos leyó y explicó cada integrante (por ejemplo, `0002_rls_y_funciones.sql`, `src/lib/puntos.ts`, `src/lib/api.ts`). [COMPLETAR POR EL EQUIPO]
-- **Pruebas propias:** quién probó la app desde su celular y con qué resultado; si una persona ajena al grupo la probó. [COMPLETAR POR EL EQUIPO]
-- **Decisiones humanas:** alcance, paleta y mascota, nombre del producto, datos que se piden y no se piden. [COMPLETAR POR EL EQUIPO]
-- **Cambios hechos a mano** sobre lo que generó la IA, si los hubo. [COMPLETAR POR EL EQUIPO]
-- **Textos:** quién revisó los textos de la interfaz, la privacidad y este documento. [COMPLETAR POR EL EQUIPO]
-
-La columna "Qué revisó o cambió el equipo" de [IA_LOG.md](../IA_LOG.md) debe quedar llena antes de la entrega. Hoy está vacía.
+| 1 | Plan | Leer los documentos sin escribir código, resumir el problema, proponer el plan en seis fases, listar dudas eligiendo la opción más simple y explicar la configuración de Supabase |
+| 2 | Base de datos | Crear el proyecto, el esquema con restricciones, la seguridad por filas, las funciones con reglas, los datos semilla ficticios y la capa de datos |
+| 3 | Vistas públicas | Construir registro, privacidad, encuesta, actividad con inscripción individual, por equipo o en la bolsa, y ranking, para celular y accesibles |
+| 4 | Panel del organizador | Panel con inicio de sesión: temporadas, actividades y encuestas; asignar desde la bolsa, asistencia, puestos, finalizar y exportar a CSV |
+| 5 | Ranking, calendario y resúmenes | Probar la regla de puntos, calendario con compartir por WhatsApp y resúmenes con foto solo si hay autorización |
+| 6 | Avance y configuración | Resumir lo hecho y lo pendiente, y dar el paso a paso de Supabase, GitHub y Vercel |
+| 7 | Prueba del escenario | Recorrer el escenario como participante y como organizador con datos reales, y limpiar los datos de prueba |
+| 8 | Verificación y despliegue | Revisar las vistas a 375 px, intentar ataques con la clave pública, preparar Vercel y revisar por qué el sitio no cargaba |
+| 9 | Identidad visual | Cambiar al verde de la AAII usando su afiche y logo, crear un logo, agregar un pingüino como mascota y usar React Bits |
+| 10 | Mascota y autoría | Poner los nombres del equipo y redibujar la mascota según una imagen de referencia, llamada "Pingüi" |
+| 11 | Documentación | Redactar README, documento breve, declaración de IA y preguntas de defensa, apoyándose en una propuesta previa del equipo |
+| 12 | Documentos en Word | Pasar el documento breve y la declaración a Word con el formato del informe de exploración |
+| 13 | Acceso y guía interna | Explicar cómo entrar como administrador y agregar organizadores, y escribir una guía interna |
+| 14 | Cuentas | Inicio de sesión con correo y contraseña desde cualquier dispositivo, sin afectar los datos ya creados |
+| 15 | Limpieza | Explicar cómo manejar las cuentas creadas y preparar un script para dejar solo la cuenta del organizador |
 
 ## 4. Límites y responsabilidad
 
-- La IA escribió la mayor parte del código. El equipo es responsable del producto y debe poder explicar y defender cada parte, como pide el curso.
-- Todo lo que la IA afirma haber verificado (pruebas, revisiones a 375 px, ataques bloqueados) está en `IA_LOG.md` con su resultado. Lo que no se pudo verificar también está anotado: por ejemplo, el voto desde producción en la revalidación final.
-- Los datos de la demo son ficticios. No se usaron datos personales reales para entrenar ni probar la IA.
+- La IA escribió la mayor parte del código y de los borradores. El equipo es responsable del producto y de lo entregado, y debe poder explicar y defender cada parte.
+- Lo que la IA verificó está registrado en IA_LOG.md con su resultado; lo que no se pudo verificar también está anotado.
+- Los datos de la demostración son ficticios. No se usaron datos personales reales para trabajar con la IA.
 - No se usó la IA para publicar imágenes de personas reales.
-
-[COMPLETAR POR EL EQUIPO: fecha y firma o nombres de quienes aprueban esta declaración]
