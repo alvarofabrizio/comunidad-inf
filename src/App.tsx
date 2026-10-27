@@ -1,5 +1,12 @@
 import { Link, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { OrgLayout } from './components/OrgLayout'
+import { RutaOrganizador } from './components/RutaOrganizador'
+import EditorActividad from './pages/org/EditorActividad'
+import EditorEncuesta from './pages/org/EditorEncuesta'
+import GestionActividad from './pages/org/GestionActividad'
+import Login from './pages/org/Login'
+import Panel from './pages/org/Panel'
 import { ProveedorSesion } from './hooks/useSesion'
 import Actividad from './pages/Actividad'
 import Bolsa from './pages/Bolsa'
@@ -21,7 +28,7 @@ function NoEncontrada() {
   )
 }
 
-// Rutas públicas (Fase 2). Las rutas /org del organizador se agregan en la Fase 3.
+// Rutas públicas y del panel del organizador (/org).
 export default function App() {
   return (
     <ProveedorSesion>
@@ -36,6 +43,19 @@ export default function App() {
           <Route path="/registro" element={<Registro />} />
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="*" element={<NoEncontrada />} />
+        </Route>
+
+        {/* Panel del organizador. RutaOrganizador protege en el frontend; la RLS, en la base. */}
+        <Route path="/org" element={<OrgLayout />}>
+          <Route path="login" element={<Login />} />
+          <Route element={<RutaOrganizador />}>
+            <Route index element={<Panel />} />
+            <Route path="actividad/nueva" element={<EditorActividad />} />
+            <Route path="actividad/:id" element={<GestionActividad />} />
+            <Route path="actividad/:id/editar" element={<EditorActividad />} />
+            <Route path="encuesta/nueva" element={<EditorEncuesta />} />
+            <Route path="encuesta/:id" element={<EditorEncuesta />} />
+          </Route>
         </Route>
       </Routes>
     </ProveedorSesion>

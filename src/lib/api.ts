@@ -28,6 +28,7 @@ import type {
   Participante,
   Resultado,
   ResultadoOpcion,
+  Resumen,
   Temporada,
 } from '../types'
 
@@ -368,6 +369,29 @@ export async function marcarAsistencia(inscripcionId: string, asistio: boolean):
   resultado(await supabase.from('inscripciones').update({ asistio }).eq('id', inscripcionId))
 }
 
+/** Marca la asistencia de varias inscripciones a la vez (por ejemplo, todo un equipo). */
+export async function marcarAsistenciaVarias(inscripcionIds: string[], asistio: boolean): Promise<void> {
+  if (inscripcionIds.length === 0) return
+  resultado(await supabase.from('inscripciones').update({ asistio }).in('id', inscripcionIds))
+}
+
+/** Saca a una persona de su equipo y la devuelve a la bolsa. */
+export async function devolverABolsa(inscripcionId: string): Promise<void> {
+  resultado(await supabase.from('inscripciones').update({ equipo_id: null, en_bolsa: true }).eq('id', inscripcionId))
+}
+
+/** Borra una inscripción (libera su lugar en el cupo). */
+export async function eliminarInscripcion(inscripcionId: string): Promise<void> {
+  resultado(await supabase.from('inscripciones').delete().eq('id', inscripcionId))
+}
+
+/** Borra un equipo; sus integrantes quedan inscritos sin equipo y vuelven a la bolsa. */
+export async function eliminarEquipo(equipoId: string): Promise<void> {
+  // Primero se pasan a la bolsa para que nadie quede inscrito "sin equipo ni bolsa".
+  resultado(await supabase.from('inscripciones').update({ equipo_id: null, en_bolsa: true }).eq('equipo_id', equipoId))
+  resultado(await supabase.from('equipos').delete().eq('id', equipoId))
+}
+
 export async function listarResultados(actividadId: string): Promise<Resultado[]> {
   return resultado(await supabase.from('resultados').select('*').eq('actividad_id', actividadId).order('posicion'))
 }
@@ -459,6 +483,73 @@ export async function eliminarOpcion(opcionId: string): Promise<void> {
 
 export async function eliminarEncuesta(id: string): Promise<void> {
   resultado(await supabase.from('encuestas').delete().eq('id', id))
+}
+
+// ---------------------------------------------------------------------------
+// Resúmenes de actividad (P1-3)
+// ---------------------------------------------------------------------------
+
+export type ResumenConActividad = Resumen & { actividad: Pick<Actividad, 'id' | 'titulo' | 'fecha_hora' | 'tipo'> }
+
+/** Resúmenes publicados, del más reciente al más antiguo. */
+export async function listarResumenes(): Promise<ResumenConActividad[]> {
+  return resultado(
+    await supabase
+      .from('resumenes')
+      .select('*, actividad:actividades(id, titulo, fecha_hora, tipo)')
+      .order('publicado_en', { ascending: false }),
+  )
+}
+
+export async function obtenerResumen(actividadId: string): Promise<Resumen | null> {
+  return resultado(await supabase.from('resumenes').select('*').eq('actividad_id', actividadId).maybeSingle())
+}
+
+/**
+ * Sube la foto de un resumen al bucket "resumenes" y devuelve su URL pública.
+ * Solo organizadores pueden subir (políticas de 0003_storage.sql).
+ */
+export async function subirImagenResumen(actividadId: string, archivo: File): Promise<string> {
+  const extension = archivo.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const ruta = `${actividadId}/${Date.now()}.${extension}`
+  const { error } = await supabase.storage.from('resumenes').upload(ruta, archivo, {
+    contentType: archivo.type,
+    upsert: false,
+  })
+  if (error) {
+    if (/mime|type/i.test(error.message)) throw new Error('Solo se aceptan imágenes JPG, PNG o WebP.')
+    if (/size|large/i.test(error.message)) throw new Error('La imagen pesa más de 5 MB.')
+    throw traducirError(error)
+  }
+  return supabase.storage.from('resumenes').getPublicUrl(ruta).data.publicUrl
+}
+
+/**
+ * Publica o actualiza el resumen de una actividad.
+ * Regla P1-3: si hay imagen, tiene que venir con imagen_autorizada = true
+ * (la base también lo exige con un CHECK).
+ */
+export async function guardarResumen(r: {
+  actividad_id: string
+  texto: string
+  ganadores: string | null
+  imagen_url: string | null
+  imagen_autorizada: boolean
+}): Promise<Resumen> {
+  if (r.imagen_url && !r.imagen_autorizada) {
+    throw new Error('Marca "Las personas que aparecen autorizaron su publicación" o quita la imagen.')
+  }
+  return resultado(
+    await supabase
+      .from('resumenes')
+      .upsert({ ...r, publicado_en: new Date().toISOString() }, { onConflict: 'actividad_id' })
+      .select()
+      .single(),
+  )
+}
+
+export async function eliminarResumen(actividadId: string): Promise<void> {
+  resultado(await supabase.from('resumenes').delete().eq('actividad_id', actividadId))
 }
 
 // ---------------------------------------------------------------------------
