@@ -43,7 +43,10 @@ export default function Encuesta() {
   const totalVotantes = resultados[0]?.total_votantes ?? 0
   const puedeVotar = abierta && !!perfil && !yaVoto
   const porCategoria = ordenCategorias
-    .map((c) => ({ categoria: c, opciones: encuesta.opciones.filter((o) => o.categoria === c) }))
+    .map((c) => ({
+      categoria: c,
+      opciones: encuesta.opciones.filter((o) => o.categoria === c).sort((a, b) => a.orden - b.orden),
+    }))
     .filter((g) => g.opciones.length > 0)
 
   // Cuántas opciones lleva elegidas la persona en cada categoría (para el límite).
@@ -98,7 +101,11 @@ export default function Encuesta() {
           <Mensaje tono="info">
             Ya votaste en esta encuesta. Tus elecciones:{' '}
             <strong className="font-semibold">
-              {encuesta.opciones.filter((o) => misVotos.includes(o.id)).map((o) => o.texto).join(', ')}
+              {porCategoria
+                .flatMap((g) => g.opciones)
+                .filter((o) => misVotos.includes(o.id))
+                .map((o) => o.texto)
+                .join(', ')}
             </strong>
             .
           </Mensaje>
